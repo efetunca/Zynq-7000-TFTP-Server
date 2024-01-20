@@ -1,3 +1,9 @@
+# Folders
+.metadata/
+RemoteSystemsTempFiles/
+TFTP_server-platform/logs/
+TFTP_server-platform/.log/
+
 # Prerequisites
 *.d
 
@@ -50,3 +56,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+IDE.log
+.analytics
+*.log
