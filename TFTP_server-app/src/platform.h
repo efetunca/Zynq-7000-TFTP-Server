@@ -1,4 +1,4 @@
-/******************************************************************************
+	/******************************************************************************
 *
 * Copyright (C) 2008 - 2014 Xilinx, Inc.  All rights reserved.
 *
@@ -37,5 +37,7 @@
 
 void init_platform();
 void cleanup_platform();
+void platform_setup_timer();
+void platform_enable_interrupts();
 
 #endif
