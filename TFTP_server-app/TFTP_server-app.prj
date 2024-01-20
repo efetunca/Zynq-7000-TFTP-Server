@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="TFTP_server-app" location="C:/DEVELOPER/Projects/Embedded/Zynq-7000-TFTP-Server/TFTP_server-app" platform="C:/DEVELOPER/Projects/Embedded/Zynq-7000-TFTP-Server/TFTP_server-platform/export/TFTP_server-platform/TFTP_server-platform.xpfm" platformUID="xilinx:zc702::0.0(custom)" systemProject="TFTP_server-app_system" sysConfig="TFTP_server-platform" runtime="C/C++" cpu="standalone_domain" cpuInstance="ps7_cortexa9_0" os="standalone" mssSignature="5045234e7b8dbf9e049867277ee2aa07">
+  <configuration name="Debug" id="xilinx.gnu.armv7.exe.debug.1118180580" dirty="true">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <configuration name="Release" id="xilinx.gnu.armv7.exe.release.1296947240" dirty="true">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <template appTemplateName="hello_world"/>
+</sdkproject:SdkProject>
