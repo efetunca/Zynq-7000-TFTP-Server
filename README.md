@@ -8,7 +8,9 @@
 *** Thanks again! Now go create something AMAZING! :D
 -->
 
-
+<!-- PROJECT HEADER -->
+<br />
+<div align="center">
 
 <!-- PROJECT SHIELDS -->
 <!--
@@ -23,9 +25,6 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-<!-- PROJECT HEADER -->
-<br />
-<div align="center">
 <h3 align="center">Zynq-7000 Based TFTP Server</h3>
 
   <p align="center">
@@ -175,11 +174,11 @@ If you have any questions regarding this project, please feel free to reach out 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/efetunca/Zynq-7000-TFTP-Server?style=for-the-badge
 [stars-url]: https://github.com/efetunca/Zynq-7000-TFTP-Server/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/efetunca/Zynq-7000-TFTP-Server?style=for-the-badge
 [issues-url]: https://github.com/efetunca/Zynq-7000-TFTP-Server/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/efetunca/Zynq-7000-TFTP-Server?style=for-the-badge
 [license-url]: https://github.com/efetunca/Zynq-7000-TFTP-Server/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/efetunca
