@@ -6,6 +6,8 @@
  */
 
 #include "tftp_server.h"
+#include "web_utils.h"
+#include "qspi.h"
 
 #include <string.h>
 #include "xil_printf.h"
@@ -14,6 +16,7 @@
 #include "lwip/udp.h"
 
 extern struct netif server_netif;
+static int checkBootFileFlag = 0;
 static char* filename = "";
 
 static err_t TFTP_sendPacket(struct udp_pcb *pcb, ip_addr_t *addr, int port, char *buf, int buflen)
@@ -227,6 +230,13 @@ static void TFTP_writeReqRecvCallback(void *_args, struct udp_pcb *upcb,
 		TFTP_cleanup(upcb, args);
 		setTimestamp(filename);
 
+		if (checkBootFileFlag) {
+			checkBootFile();
+			doQspiFlash("BOOT.BIN");
+			f_chdir("/..");
+			checkBootFileFlag = 0;
+		}
+
 		listDirectory("0:");
 		createIndexFileTree("0:");
 		return;
@@ -241,6 +251,17 @@ static int TFTP_writeProcess(struct udp_pcb *pcb, ip_addr_t *ip, int port, char 
 	FRESULT Res;
 
 	filename = fname;
+
+	if (!strncmp(fname, BOOT_FILE_NAME, sizeof(BOOT_FILE_NAME))) {
+		/*
+		 * In order for the f_chdir function to work,
+		 * the 'set_fs_rpath' value must be set to '2'
+		 * in the BSP settings.
+		 */
+		fname = BOOT_FILE_NAME_TEMP;
+		f_chdir("/firmwares");
+		checkBootFileFlag = 1;
+	}
 
 	Res = f_open(&file, fname, FA_CREATE_ALWAYS | FA_WRITE);
 	if (Res) {
@@ -425,6 +446,13 @@ int initFileSystem(const char *path, int formatDrive)
 			return -1;
 		}
 		setTimestamp("/logs");
+
+		Res = f_mkdir("firmwares");
+		if (Res != FR_OK) {
+			xil_printf("Failed to create \"firmwares\" directory");
+			return -1;
+		}
+		setTimestamp("/firmwares");
 	}
 	return 0;
 }

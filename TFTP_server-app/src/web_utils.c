@@ -403,3 +403,47 @@ void createIndexFileTree(const char *path)
 	f_close(&file);
 	f_closedir(&dir);
 }
+
+/*****************************************************************************/
+/**
+*
+* This function checks if there is files named 'BOOT.BIN'
+* and 'BOOT_old.BIN' in the directory.
+*
+* If there is a file named 'BOOT_old.BIN', this function deletes it.
+*
+* If there is a file named 'BOOT.BIN', this function renames it as 'BOOT_old.BIN'
+* and sets its time attribute with setTimestamp function.
+*
+* @param	None.
+*
+* @return	None.
+*
+* @note		The firmware directory must be selected before calling this function.
+*
+******************************************************************************/
+void checkBootFile(void)
+{
+	FRESULT res;
+
+	/* Checking if there is a file named 'BOOT_old.BIN' */
+	res = f_stat(BOOT_FILE_NAME_OLD, NULL);
+	if (res == FR_OK)
+		/* Delete the file if there is */
+		f_unlink(BOOT_FILE_NAME_OLD);
+
+	/* Checking if there is a file named 'BOOT.BIN' */
+	res = f_stat(BOOT_FILE_NAME, NULL);
+	if (res == FR_OK) {
+		/* Rename the file if there is and set its time attribute */
+		f_rename(BOOT_FILE_NAME, BOOT_FILE_NAME_OLD);
+		setTimestamp(BOOT_FILE_NAME_OLD);
+	}
+
+	/* Renaming the 'temp_BOOT.BIN' file */
+	res = f_stat(BOOT_FILE_NAME_TEMP, NULL);
+	if (res == FR_OK) {
+		f_rename(BOOT_FILE_NAME_TEMP, BOOT_FILE_NAME);
+		setTimestamp(BOOT_FILE_NAME);
+	}
+}
