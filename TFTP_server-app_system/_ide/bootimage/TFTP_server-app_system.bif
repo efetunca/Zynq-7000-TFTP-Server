@@ -1,0 +1,7 @@
+//arch = zynq; split = false; format = BIN
+the_ROM_image:
+{
+	[bootloader]C:/DEVELOPER/Projects/Embedded/Zynq-7000-TFTP-Server/TFTP_server-platform/export/TFTP_server-platform/sw/TFTP_server-platform/boot/fsbl.elf
+	C:/DEVELOPER/Projects/Embedded/Zynq-7000-TFTP-Server/TFTP_server-app/_ide/bitstream/zynq7000-bitstream.bit
+	C:/DEVELOPER/Projects/Embedded/Zynq-7000-TFTP-Server/TFTP_server-app/Debug/TFTP_server-app.elf
+}

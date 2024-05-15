@@ -6,6 +6,11 @@
  */
 
 #include "qspi.h"
+#include "aes.h"
+
+uint8_t key[] 	= { 0x60, 0x3d, 0xeb, 0x10, 0x15, 0xca, 0x71, 0xbe, 0x2b, 0x73, 0xae, 0xf0, 0x85, 0x7d, 0x77, 0x81,
+					0x1f, 0x35, 0x2c, 0x07, 0x3b, 0x61, 0x08, 0xd7, 0x2d, 0x98, 0x10, 0xa3, 0x09, 0x14, 0xdf, 0xf4 };
+uint8_t iv[]  	= { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
 
 static int FlashReadID(XQspiPs *QspiPtr);
 static int FlashWrite(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command);
@@ -395,27 +400,64 @@ static int verifyAfterFlash(XQspiPs *QspiInstancePtr, u32 readSize, u32 Addr)
 	return XST_SUCCESS;
 }
 
-static int checkFileOnFlash(XQspiPs *QspiInstancePtr)
+static int decryptFile(int filesize)
 {
-	static int status, index;
-	static u8 checkBytesOnFlash[256];
-	static u32 addr = (NUM_SECTORS - 2) * SECTOR_SIZE;
+	struct AES_ctx ctx;
+	FRESULT Res;
+	FIL newFile;
+	size_t numBytesWritten;
+	char newFname[300] = "BOOT_Decrypted.BIN";
+	u8 *fileContent;
+	u8 padValue;
+	u8 count;
+	u8 status;
 
-	status = FlashRead(QspiInstancePtr, addr, PAGE_SIZE, FAST_READ_CMD);
-	if (status != XST_SUCCESS) {
-		xil_printf("Reading Failed!\r\n\n");
-		return status;
+	fileContent = (u8 *)FILE_DATA_ADDR_TX;
+
+	Res = f_open(&newFile, newFname, FA_WRITE | FA_CREATE_ALWAYS);
+	if (Res) {
+		xil_printf("ERROR: f_open %d\r\n\n", Res);
+		return XST_FAILURE;
+	}
+	else
+		xil_printf("DONE: f_open\r\n");
+
+	aes_init_ctx_iv(&ctx, key, iv);
+	decrypt_aes(&ctx, fileContent, filesize);
+
+	if (filesize % 16) {
+		f_close(&newFile);
+		return XST_FAILURE;
 	}
 
-	memcpy(checkBytesOnFlash, &ReadBuffer[DATA_OFFSET + DUMMY_SIZE], PAGE_SIZE);
+	padValue = fileContent[filesize - 1];
 
-	for (index = 1; index < PAGE_SIZE; index++) {
-		if (checkBytesOnFlash[index] != checkBytesOnFlash[index - 1]) {
-			xil_printf("error on index #%d", index);
+	for(count = 0; count < padValue; count++) {
+		filesize--;
+		if (fileContent[filesize] != padValue)
 			return XST_FAILURE;
-		}
 	}
-	return checkBytesOnFlash[0];
+
+	Res = f_write(&newFile, fileContent, filesize, &numBytesWritten);
+	if (Res) {
+		xil_printf("ERROR: f_write %d\r\n\n", Res);
+		return XST_FAILURE;
+	}
+	else
+		xil_printf("DONE: f_write\r\n");
+
+	xil_printf("Decrypting completed!\r\n");
+	xil_printf("Now decrypted file is reading...\r\n\n");
+
+	status = readFileFromSd(newFname);
+	if (status == XST_FAILURE) {
+		xil_printf("===== Reading decrypted file from SD Card failed! =====\r\n");
+		return XST_FAILURE;
+	}
+	else
+		xil_printf("===== Reading decrypted file from SD Card completed successfully! =====\r\n\n");
+
+	return XST_SUCCESS;
 }
 
 /*****************************************************************************/
@@ -734,9 +776,9 @@ static int FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount)
 ******************************************************************************/
 int doQspiFlash(const char *fname)
 {
-	static XQspiPs QspiInstance;
-	static int filesize;
-	static int status;
+	XQspiPs QspiInstance;
+	int filesize;
+	int status;
 
 	QspiFlashInit(&QspiInstance, QSPI_DEVICE_ID);
 
@@ -764,6 +806,14 @@ int doQspiFlash(const char *fname)
 		filesize = status;
 		xil_printf("===== Reading file from SD Card completed successfully! =====\r\n\n");
 	}
+
+	status = decryptFile(filesize);
+	if (status == XST_FAILURE) {
+		xil_printf("===== Decrypting and reading file on SD card failed! =====\r\n");
+		return 0;
+	}
+	else
+		xil_printf("===== Decrypting and reading file on SD card completed successfully! =====\r\n\n");
 
 	/*
 	 * Writing the data, which is read above, to the QSPI Flash.

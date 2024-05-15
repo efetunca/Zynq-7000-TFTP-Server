@@ -35,3 +35,6 @@ bsp write
 bsp reload
 catch {bsp regenerate}
 platform generate
+platform generate
+platform clean
+platform generate
