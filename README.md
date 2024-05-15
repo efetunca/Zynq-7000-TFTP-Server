@@ -25,7 +25,7 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-<h3 align="center">Zynq-7000 Based TFTP Server v1.1.0</h3>
+<h3 align="center">Zynq-7000 Based TFTP Server v1.2.0</h3>
 
   <p align="center">
     This project encompasses a TFTP (Trivial File Transfer Protocol) server operating on a card equipped with Xilinx's Zynq-7000 series FPGA and ARM processor combination.
@@ -51,6 +51,7 @@
     <li>
       <a href="#usage">Usage</a>
         <ul>
+          <li><a href="#encrypting-the-boot-image">Encrypting the Boot Image</a></li>
           <li><a href="#flashing-the-software-to-the-qspi">Flashing the Software to the QSPI (deprecated)</a></li>
           <li><a href="#connecting-to-the-server">Connecting to the Server</a></li>
           <li><a href="#showing-the-outputs-of-the-board">Showing the Outputs of the Board</a></li>
@@ -83,11 +84,11 @@ There is no specific pre-requisites list for this project. You just need to have
 
 ### Importing Project to Vitis
 
-1. Download `TFTP_server_v1.1.0.zip` file from <a href="https://github.com/efetunca/Zynq-7000-TFTP-Server/releases/tag/1.1.0">releases</a> page.
+1. Download `TFTP_server_v1.2.0.zip` file from <a href="https://github.com/efetunca/Zynq-7000-TFTP-Server/releases/tag/1.2.0">releases</a> page.
 2. Create a new folder for the workspace.
 3. Open Vitis and select the newly created workspace folder.
 4. Select "Vitis project exported zip file" and click "Next.
-6. Click "Browse..." button next to the "Archive File" text and select the `TFTP_server_v1.1.0.zip` file.
+6. Click "Browse..." button next to the "Archive File" text and select the `TFTP_server_v1.2.0.zip` file.
 7. Make sure all of these 3 projects are ticked:
   * TFTP_server-app
   * TFTP_server-app_system
@@ -105,6 +106,9 @@ You have various options to run this software on the ZC702 board:
 * SD card etc.
 
 The only methods I tried were JTAG and QSPI. To use this program with JTAG, you just need to debug the project after importing it into Vitis. However, you will only be able to use this program when connected to the computer via a USB cable. As a second and recommended method, you can connect it to the computer via JTAG and write the software to the QSPI. In this way, after turning off the board, setting the boot switch as necessary and turning it on again, you will see the software running automatically.
+
+### Encrypting the Boot Image
+To perform the AES encryption, run the `AES_Encryption.exe` file located in the `AES_encryption` folder. When this file is executed, a terminal window will open. Drag and drop your `BOOT.BIN` file into this terminal window (See steps 1 to 3 in the <a href="#flashing-the-software-to-the-qspi">Flashing the Software to the QSPI</a> section to create your boot image). Once the file path appears in the terminal, simply press Enter to complete the process. The encrypted file is saved under the same folder with the name `BOOT_encrypted.BIN`. You can find the source code of this tiny application in the <a href="https://github.com/efetunca/Zynq-7000-TFTP-Server/tree/main/AES_Encryption/src">AES_Encryption/src</a> folder. The decryption operation is done by Zynq device automatically and it may take a while. Like, a couple of minutes.
 
 ### ~~Flashing the Software to the QSPI~~
 ~~**You must build the project before these steps.**~~
@@ -134,7 +138,7 @@ After each read and write request transmitted to the board, the `index.html` fil
 You can see the outputs of the software from the moment it runs through a program such as PuTTY. For this, you must download and install the driver given in the <a href="#prerequisites">Prerequisites</a> section. Then, you need to run PuTTY or another program of your choice, select the COM port which the board is connected to and set the baudrate to 115200.
 
 ### Automatic Flashing
-You can now automatically flash a `BOOT.BIN` file by just sending the file over TFTP. The program automatically recognizes the file and does the necessary QSPI Flashing operations. You just have to monitor the progress coming through the UART on a terminal like PuTTY, and turn off the board and turn it on again in QSPI boot mode when the operations are completed.
+You can now automatically flash a `BOOT.BIN` file by just sending the file over TFTP. You can create your boot image by following the steps 1 to 3 in the <a href="#flashing-the-software-to-the-qspi">Flashing the Software to the QSPI</a> section. The program automatically recognizes the file and does the necessary QSPI Flashing operations. You just have to monitor the progress coming through the UART on a terminal like PuTTY, and turn off the board and turn it on again in QSPI boot mode when the operations are completed.
 
 > If you want to use a different boot file name, you have to change the `BOOT_FILE_NAME` define in the `web_utils.h` file.
 
@@ -144,7 +148,7 @@ You can now automatically flash a `BOOT.BIN` file by just sending the file over 
 ## Roadmap
 
 - [x] Automatically flashing the BOOT.BIN file to QSPI.
-    - [ ] Store the BOOT.BIN file encrypted.
+    - [x] Store the BOOT.BIN file encrypted.
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
 

@@ -35,7 +35,6 @@ TFTP_server-platform/.log/
 *.dylib
 
 # Executables
-*.exe
 *.out
 *.app
 *.i*86
